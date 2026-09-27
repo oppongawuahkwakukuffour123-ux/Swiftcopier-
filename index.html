@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SwiftCopier Dashboard</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f7fb;margin:0;padding:20px}
+.wrap{max-width:900px;margin:auto}
+h1{margin-bottom:6px}
+.card{background:#fff;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 2px 12px #0000000d}
+.stat{font-size:30px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+td,th{padding:10px;text-align:left;border-bottom:1px solid #eee}
+small{color:#777}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>SwiftCopier</h1>
+<small>Demo copier dashboard</small>
+<div class="card"><div class="stat" id="total">0</div>Signals received</div>
+<div class="card">
+<table><thead><tr><th>ID</th><th>Event</th><th>Side</th><th>Symbol</th><th>Volume</th></tr></thead>
+<tbody id="rows"></tbody></table>
+</div>
+</div>
+<script>
+async function load(){
+  const base=location.origin;
+  try{
+    const r=await fetch(base+'/api/v1/status');
+    const d=await r.json();
+    document.getElementById('total').textContent=d.signals_total;
+    document.getElementById('rows').innerHTML=d.latest.map(x=>`
+      <tr><td>${x.id}</td><td>${x.event}</td><td>${x.side}</td>
+      <td>${x.symbol}</td><td>${x.volume}</td></tr>`).join('');
+  }catch(e){console.log(e)}
+}
+load(); setInterval(load,3000);
+</script>
+</body>
+</html>
